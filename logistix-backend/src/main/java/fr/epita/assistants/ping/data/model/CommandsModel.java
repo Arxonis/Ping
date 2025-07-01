@@ -12,6 +12,15 @@ import java.util.UUID;
 @Table(name = "commands")
 public class CommandsModel {
 
+    enum State {
+        PENDING,
+        IN_PROGRESS,
+        COMPLETED,
+        CANCELLED
+    }
+
+    // commands(id, userId, date, nom, io, state, dest_place, departure_place, productId, nbProducts)
+
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")
@@ -27,11 +36,12 @@ public class CommandsModel {
     @Column(nullable = false)
     private String nom;
 
+    // io: true for input, false for output
     @Column(nullable = false)
-    private String io;
+    private Boolean io;
 
     @Column(nullable = false)
-    private String state;
+    private State state;
 
     @Column(name = "dest_place", nullable = false)
     private String destPlace;

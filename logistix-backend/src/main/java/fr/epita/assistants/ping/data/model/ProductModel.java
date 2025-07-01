@@ -6,9 +6,14 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity @Table(name = "products")
 public class ProductModel {
+
+    // product(id, name, marque, width, height, weight, is_fireable, is_waterproof, fragility, price)
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -30,10 +35,19 @@ public class ProductModel {
     @Column(nullable = false)
     private Double weight;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "security_id")
-    private SecurityModel security;
+    @Column(name = "is_fireable", nullable = false)
+    private Boolean isFireable;
+
+    @Column(name = "is_waterproof", nullable = false)
+    private Boolean isWaterproof;
+
+    @Column(nullable = false)
+    private Integer fragility;
 
     @Column(nullable = false)
     private Double price;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<WarehouseStockModel> stocks = new HashSet<>();
+
 }

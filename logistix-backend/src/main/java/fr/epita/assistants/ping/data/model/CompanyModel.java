@@ -10,6 +10,9 @@ import java.util.UUID;
 @Entity @Table(name = "companies")
 public class CompanyModel {
 
+
+    // company(id, name, emplacement)
+    
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "uuid2")

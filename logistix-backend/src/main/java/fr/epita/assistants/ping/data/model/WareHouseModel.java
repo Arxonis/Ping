@@ -6,9 +6,14 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.UUID;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 @Entity @Table(name = "warehouses")
 public class WareHouseModel {
+
+    // wareHouse(id, name, surface, hauteur, emplacement)
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -26,4 +31,8 @@ public class WareHouseModel {
 
     @Column(nullable = false)
     private String emplacement;
+
+    @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final Set<WarehouseStockModel> stocks = new HashSet<>();
+
 }

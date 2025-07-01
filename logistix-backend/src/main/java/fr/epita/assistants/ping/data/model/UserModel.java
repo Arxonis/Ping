@@ -13,19 +13,20 @@ import java.util.UUID;
 @Entity @Table(name = "users")
 public class UserModel {
 
+
+    // user(id, name, password, company, isAdmin)
+
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name="uuid2", strategy="uuid2")
     private UUID id;
 
-    // @Column(nullable = false, unique = true)
-    // private String login;
+    @Column(name="name", nullable=false)
+    private String displayName;
 
     @Column(nullable = false)
     private String password;
 
-    @Column(name="name", nullable=false)
-    private String displayName;
     
     private CompanyModel company;
 
@@ -33,11 +34,9 @@ public class UserModel {
     @Column(name="is_admin", nullable=false)
     @Builder.Default private Boolean isAdmin = false;
 
-    // @OneToMany(mappedBy="owner", cascade=CascadeType.ALL, orphanRemoval = true)
-    // private Set<ProjectModel> ownedProjects = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private Set<WarehouseStockModel> stocksManaged = new HashSet<>();
 
-    // @ManyToMany(mappedBy="members")
-    // private Set<ProjectModel> memberProjects = new HashSet<>();
 
     public void setIsAdmin(Boolean isAdmin) {
         this.isAdmin = isAdmin;
