@@ -1,6 +1,6 @@
 package fr.epita.assistants.ping.data.repository;
 
-import com.ping.logistix.data.model.ProjectModel;
+import fr.epita.assistants.ping.data.model.ProjectModel;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 
