@@ -37,6 +37,10 @@ public class UserModel {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Set<WarehouseStockModel> stocksManaged = new HashSet<>();
 
+    @Column(name = "avatar_path")
+    private String avatarPath;
+
+
 
     public void setIsAdmin(Boolean isAdmin) {
         this.isAdmin = isAdmin;

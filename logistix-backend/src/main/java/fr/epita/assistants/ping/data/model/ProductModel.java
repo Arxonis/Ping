@@ -47,6 +47,9 @@ public class ProductModel {
     @Column(nullable = false)
     private Double price;
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
     @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<WarehouseStockModel> stocks = new HashSet<>();
 
