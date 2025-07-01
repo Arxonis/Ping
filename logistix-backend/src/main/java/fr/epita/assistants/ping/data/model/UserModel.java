@@ -27,7 +27,7 @@ public class UserModel {
     @Column(name="name", nullable=false)
     private String displayName;
     
-    private String avatar;
+    private CompanyModel company;
 
     @JsonProperty("isAdmin")
     @Column(name="is_admin", nullable=false)

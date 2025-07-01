@@ -30,8 +30,9 @@ public class ProductModel {
     @Column(nullable = false)
     private Double weight;
 
-    @Column(name = "security_id", nullable = false, unique = true)
-    private String securityId;
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "security_id")
+    private SecurityModel security;
 
     @Column(nullable = false)
     private Double price;
