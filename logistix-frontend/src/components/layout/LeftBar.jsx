@@ -1,14 +1,24 @@
+// src/components/layout/LeftBar.jsx
 import {
   Box,
+  Collapse,
   Drawer,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
+  useTheme,
 } from "@mui/material";
-import { BarChart3, LayoutDashboard, Package, Truck } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import {
+  BarChart3,
+  ChevronDown,
+  LayoutDashboard,
+  Package,
+  Truck,
+} from "lucide-react";
+import React from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import { drawerWidth, toolbarHeight } from "../../constants/layout";
 
 const groups = [
@@ -48,12 +58,13 @@ const groups = [
     ],
   },
 ];
-
 export default function LeftBar() {
-  const { pathname } = useLocation();
-
-  // repère le groupe actif (premier segment de l’URL)
-  const activeGroup = groups.find((g) => pathname.startsWith(g.path));
+  const theme = useTheme();
+  const bg =
+    theme.palette.mode === "light" ? "#003B71" : theme.palette.grey[900];
+  const { pathname, search } = useLocation();
+  const currentPath = pathname + search;
+  const nav = useNavigate();
 
   return (
     <Drawer
@@ -61,65 +72,84 @@ export default function LeftBar() {
       sx={{
         width: drawerWidth,
         flexShrink: 0,
-        [`& .MuiDrawer-paper`]: {
+        "& .MuiDrawer-paper": {
           width: drawerWidth,
-          bgcolor: "#003B71",
+          bgcolor: bg,
           color: "#fff",
+          boxSizing: "border-box",
           top: `${toolbarHeight}px`,
           height: `calc(100% - ${toolbarHeight}px)`,
-          border: "none",
+          borderRadius: 0, // <- plus d'arrondis
         },
       }}
     >
       <Box mt={2}>
-        {groups.map((grp) => (
-          <Box key={grp.label}>
-            {/* --------- Titre de section --------- */}
-            <ListItem disablePadding>
-              <ListItemButton
-                component={Link}
-                to={grp.path}
-                selected={activeGroup?.label === grp.label}
-                sx={{
-                  mx: 1,
-                  borderRadius: 3,
-                  "&.Mui-selected": {
-                    bgcolor: "#0d6efd",
-                    "&:hover": { bgcolor: "#0d6efd" },
-                  },
-                }}
-              >
-                <ListItemIcon sx={{ color: "inherit" }}>
-                  {grp.icon}
-                </ListItemIcon>
-                <ListItemText primary={grp.label} />
-              </ListItemButton>
-            </ListItem>
+        {groups.map((grp) => {
+          const isGroupSelected = grp.path
+            ? currentPath.startsWith(grp.path)
+            : grp.children?.some((c) => currentPath === c.path);
 
-            {/* --------- Sous-liens toujours visibles --------- */}
-            {grp.children.length > 0 && (
-              <List dense sx={{ pl: 5, borderLeft: "1px solid #0d6efd40" }}>
-                {grp.children.map((sub) => (
-                  <ListItemButton
-                    key={sub.label}
-                    component={Link}
-                    to={sub.path}
-                    selected={pathname === sub.path}
-                    sx={{ py: 0.5 }}
+          return (
+            <Box key={grp.label}>
+              <ListItem disablePadding>
+                <ListItemButton
+                  selected={isGroupSelected}
+                  sx={{
+                    mx: 1,
+                    borderRadius: (theme) => theme.shape.borderRadius * 2, // pill-shape
+                    color: "inherit",
+                    "&.Mui-selected": {
+                      bgcolor: theme.palette.primary.main,
+                      "&:hover": {
+                        bgcolor: theme.palette.primary.main,
+                      },
+                    },
+                  }}
+                  onClick={() => grp.path && nav(grp.path)}
+                >
+                  <ListItemIcon sx={{ color: "inherit" }}>
+                    {grp.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={grp.label} />
+                  {grp.children && <ChevronDown size={16} color="inherit" />}
+                </ListItemButton>
+              </ListItem>
+
+              {grp.children && (
+                <Collapse in>
+                  <List
+                    dense
+                    sx={{
+                      pl: 5,
+                      borderLeft: `1px solid ${theme.palette.primary.main}40`,
+                    }}
                   >
-                    <ListItemText
-                      primaryTypographyProps={{
-                        variant: "caption",
-                        color: "#dfeafa",
-                      }}
-                      primary={sub.label}
-                    />
-                  </ListItemButton>
-                ))}
-              </List>
-            )}
-          </Box>
-        ))}
+                    {grp.children.map((sub) => (
+                      <ListItemButton
+                        key={sub.label}
+                        selected={currentPath === sub.path}
+                        sx={{
+                          py: 0.5,
+                          borderRadius: (theme) => theme.shape.borderRadius * 2, // pill-shape
+                          color:
+                            currentPath === sub.path
+                              ? theme.palette.primary.main
+                              : "rgba(255,255,255,0.8)",
+                        }}
+                        onClick={() => nav(sub.path)}
+                      >
+                        <ListItemText
+                          primary={sub.label}
+                          primaryTypographyProps={{ variant: "caption" }}
+                        />
+                      </ListItemButton>
+                    ))}
+                  </List>
+                </Collapse>
+              )}
+            </Box>
+          );
+        })}
       </Box>
     </Drawer>
   );

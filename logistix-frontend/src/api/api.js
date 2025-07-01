@@ -93,3 +93,99 @@ export async function getOrderHistory(userId) {
         { id: 7, name: 'Produit 7', qty: 3, status: 'delivered' },
     ];
 }
+
+const delay = (ms) => new Promise((res) => setTimeout(res, ms));
+
+export async function fetchAccountInfo() {
+    await delay(500);
+    // données factices
+    return {
+        displayName: "Alice Dupont",
+        companyName: "Logistix SA",
+        role: "Admin",
+        avatar: "/path/to/avatar.jpg",
+    };
+}
+
+export async function performLogout() {
+    await delay(200);
+    // ici on « détruirait » le token
+    return;
+}
+
+export async function fetchSettings() {
+    await delay(300);
+    return {
+        isDarkMode: false,
+        notificationsEnabled: true,
+    };
+}
+
+export async function saveSettings(settings) {
+    await delay(300);
+    // renvoie ce qu'on a sauvegardé
+    return settings;
+}
+
+export async function fetchExistingProducts() {
+    await new Promise((r) => setTimeout(r, 300));
+    return [
+        { id: "1", name: "Produit 1" },
+        { id: "2", name: "Produit 2" },
+        { id: "3", name: "Produit 3" },
+    ];
+}
+
+export async function fetchProviders() {
+    await new Promise((r) => setTimeout(r, 300));
+    return [
+        { id: "a", name: "Fournisseur A" },
+        { id: "b", name: "Fournisseur B" },
+    ];
+}
+
+
+export async function reorderProduct({ productId, qty }) {
+    console.log("API reorderProduct", productId, qty);
+    await new Promise((r) => setTimeout(r, 500));
+    return { success: true };
+}
+
+// src/api.js
+export async function fetchProducts() {
+    // simule un appel long
+    await new Promise((r) => setTimeout(r, 300));
+    return [
+        { id: "1", name: "Produit 1" },
+        { id: "2", name: "Produit 2" },
+        { id: "3", name: "Produit 3" },
+    ];
+}
+
+export async function createProduct(payload) {
+    console.log("createProduct", payload);
+    await new Promise((r) => setTimeout(r, 300));
+    return { success: true, id: Date.now().toString() };
+}
+
+export async function restockProduct({ productId, number }) {
+    console.log("restockProduct", productId, number);
+    await new Promise((r) => setTimeout(r, 300));
+    return { success: true };
+}
+
+
+export async function fetchZones() {
+    await new Promise((r) => setTimeout(r, 200));
+    return [
+        { id: "zone-nord", name: "Zone Nord" },
+        { id: "zone-sud", name: "Zone Sud" },
+        { id: "zone-est", name: "Zone Est" },
+    ];
+}
+
+export async function placeOrder({ productId, zoneId, quantity, unitPrice }) {
+    console.log("placeOrder", { productId, zoneId, quantity, unitPrice });
+    await new Promise((r) => setTimeout(r, 300));
+    return { success: true, orderId: Date.now().toString() };
+}

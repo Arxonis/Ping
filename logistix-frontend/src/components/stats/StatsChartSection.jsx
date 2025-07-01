@@ -1,5 +1,6 @@
 // src/components/stats/StatsChartSection.jsx
 import { Box, Paper, Stack, Typography } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import {
   CartesianGrid,
@@ -14,6 +15,7 @@ import {
 const colors = { revenue: "#0d6efd", receipts: "#9155fd" };
 
 export default function StatsChartSection({ data }) {
+  const theme = useTheme();
   return (
     <motion.div
       initial={{ y: 40, opacity: 0 }}
@@ -34,7 +36,14 @@ export default function StatsChartSection({ data }) {
           direction="row"
           alignItems="center"
           justifyContent="space-between"
-          sx={{ bgcolor: "#d3e6ff", px: 3, py: 1.5 }}
+          sx={{
+            bgcolor:
+              theme.palette.mode === "light"
+                ? theme.palette.primary.light // reste votre bleu clair
+                : theme.palette.grey[800], // gris foncé en dark
+            px: 3,
+            py: 1.5,
+          }}
         >
           <Typography fontWeight={600}>CA / Recettes</Typography>
           <Stack direction="row" spacing={3}>

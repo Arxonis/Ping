@@ -9,10 +9,13 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { Image, RefreshCw } from "lucide-react"; // <-- on importe Image, pas ImageSquare
 
 export default function BestSellersSection({ rows }) {
+  const theme = useTheme();
+
   return (
     <motion.div
       initial={{ y: 40, opacity: 0 }}
@@ -32,7 +35,14 @@ export default function BestSellersSection({ rows }) {
         <Stack
           direction="row"
           alignItems="center"
-          sx={{ bgcolor: "#d3e6ff", px: 3, py: 1.5 }}
+          sx={{
+            bgcolor:
+              theme.palette.mode === "light"
+                ? theme.palette.primary.light // #d3e6ff
+                : theme.palette.grey[800], // gris foncé en mode sombre
+            px: 3,
+            py: 1.5,
+          }}
         >
           <Typography fontWeight={600}>Produits les plus vendus</Typography>
         </Stack>

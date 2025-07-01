@@ -10,6 +10,7 @@ import {
   TableRow,
   Typography,
 } from "@mui/material";
+import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
 import { ArrowRightCircle, Image, RefreshCw } from "lucide-react";
 
@@ -37,6 +38,7 @@ const statusMap = {
 };
 
 export default function OrderSection({ rows, onNewOrder }) {
+  const theme = useTheme();
   return (
     <motion.div
       initial={{ y: 40, opacity: 0 }}
@@ -47,7 +49,7 @@ export default function OrderSection({ rows, onNewOrder }) {
         elevation={0}
         sx={{
           mt: 4,
-          borderRadius: 4,
+          borderRadius: 2,
           overflow: "hidden",
           boxShadow: "0 4px 12px rgba(0,0,0,.05)",
         }}
@@ -57,7 +59,14 @@ export default function OrderSection({ rows, onNewOrder }) {
           direction="row"
           alignItems="center"
           justifyContent="space-between"
-          sx={{ bgcolor: "#d3e6ff", px: 3, py: 1.5 }}
+          sx={{
+            bgcolor:
+              theme.palette.mode === "light"
+                ? theme.palette.primary.light // reste votre bleu clair
+                : theme.palette.grey[800], // gris foncé en dark
+            px: 3,
+            py: 1.5,
+          }}
         >
           <Typography fontWeight={600}>Historique des commandes</Typography>
           <Button
