@@ -1,9 +1,39 @@
 // src/api/api.js
+import axios from 'axios';
+
+
+
+/**
+ * Appelle l’API pour s’authentifier et renvoie le token JWT.
+ * @param {string} login
+ * @param {string} password
+ * @returns {Promise<string>} le token JWT
+ */
+
+export async function login(login, password) {
+    console.log(`Authenticating ${login}…`);
+    try {
+        const { data } = await axios.post('/api/auth/login', {
+            login,
+            password
+        });
+        // data should be { token: "…" }
+        return data.token;
+    } catch (err) {
+        console.error('Login failed', err);
+        // On peut remonter l’erreur à l’appelant
+        throw err;
+    }
+}
 
 /* ------------------------------------------------------------------------- */
 /*      ⚠️ Ces fonctions renvoient des données factices.
          Remplacez l’implémentation par de vrais appels axios.               */
 /* ------------------------------------------------------------------------- */
+
+
+
+
 
 export async function getStockCount(userId) {
     console.log(`Fetching stock count for user ${userId}`);

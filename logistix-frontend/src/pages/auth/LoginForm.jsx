@@ -1,3 +1,5 @@
+// src/components/LoginForm.jsx
+
 import { yupResolver } from "@hookform/resolvers/yup";
 import LockIcon from "@mui/icons-material/Lock";
 import MailOutlineIcon from "@mui/icons-material/MailOutline";
@@ -14,10 +16,13 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import axios from "axios";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
+
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { login } from "../../api/api";
 
 const Shell = styled(Card)({
   maxWidth: 430,
@@ -34,13 +39,15 @@ const Header = styled("header")({
   justifyContent: "center",
 });
 
+// Plus de .email(), juste required()
 const schema = yup.object({
-  email: yup.string().email("Email invalide").required("Obligatoire"),
+  login: yup.string().required("Obligatoire"),
   password: yup.string().min(4, "≥ 4 caractères").required("Obligatoire"),
 });
 
 export default function LoginForm({ title, role }) {
   const [showPwd, setShowPwd] = useState(false);
+  const navigate = useNavigate();
 
   const {
     register,
@@ -48,10 +55,12 @@ export default function LoginForm({ title, role }) {
     formState: { errors, isSubmitting },
   } = useForm({ resolver: yupResolver(schema) });
 
-  const onSubmit = async (data) => {
+  const onSubmit = async ({ login: userLogin, password }) => {
     try {
-      const res = await axios.post("/api/auth/login", { ...data, role });
-      console.log(res.data); // TODO : stocker JWT, redirect dashboard
+      const token = await login(userLogin, password);
+      localStorage.setItem("authToken", token);
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      navigate("/dashboard");
     } catch {
       alert("Identifiants invalides");
     }
@@ -72,14 +81,14 @@ export default function LoginForm({ title, role }) {
           onSubmit={handleSubmit(onSubmit)}
           sx={{ display: "grid", gap: 3 }}
         >
-          {/* --------- Email --------- */}
+          {/* --------- Login --------- */}
           <TextField
             label="Login"
-            placeholder="Entrez votre mail…"
+            placeholder="Entrez votre nom/prénom…"
             fullWidth
-            {...register("email")}
-            error={!!errors.email}
-            helperText={errors.email?.message}
+            {...register("login")}
+            error={!!errors.login}
+            helperText={errors.login?.message}
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
