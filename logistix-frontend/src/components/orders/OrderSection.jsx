@@ -38,6 +38,7 @@ const statusMap = {
 };
 
 export default function OrderSection({ rows, onNewOrder }) {
+  console.log("OrderSection", rows);
   const theme = useTheme();
   return (
     <motion.div
