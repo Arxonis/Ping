@@ -17,13 +17,15 @@ import StatCard from "../../components/stats/StatCard";
 import { toolbarHeight } from "../../constants/layout";
 
 export default function ProductsPage() {
-  const userId = 1;
+  const userId = "92f67e9a-a34d-401d-bced-fb49314fe565";
 
   /* stats */
   const stock = useQuery({
-    queryKey: ["stockCount", userId],
-    queryFn: () => getStockCount(userId),
+    queryKey: ["stockCount"],
+    queryFn: () => getStockCount(),
   });
+  console.log("stock", stock);
+  console.log("stock", stock.error);
   const sales = useQuery({
     queryKey: ["salesCount", userId],
     queryFn: () => getMonthlySales(userId),
@@ -89,7 +91,7 @@ export default function ProductsPage() {
             >
               <Stack direction={{ xs: "column", md: "row" }} spacing={4} mb={6}>
                 <StatCard
-                  value={stock.data}
+                  value={stock.data.totalQuantity}
                   label="produits en stock"
                   icon={<Package size={32} color="#0d6efd" />}
                 />
