@@ -25,10 +25,10 @@ export default function ProductsPage() {
     queryFn: () => getStockCount(),
   });
   console.log("stock", stock);
-  console.log("stock", stock.error);
+  console.log("stockssssss", stock.error);
   const sales = useQuery({
     queryKey: ["salesCount", userId],
-    queryFn: () => getMonthlySales(userId),
+    queryFn: () => getMonthlySales(),
   });
   const transit = useQuery({
     queryKey: ["transitCount", userId],
@@ -96,7 +96,7 @@ export default function ProductsPage() {
                   icon={<Package size={32} color="#0d6efd" />}
                 />
                 <StatCard
-                  value={sales.data}
+                  value={sales.data.totalQuantity}
                   label="articles vendus ce mois"
                   icon={<ShoppingCart size={32} color="#0d6efd" />}
                 />

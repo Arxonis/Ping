@@ -1,5 +1,6 @@
 package fr.epita.assistants.ping.presentation.rest;
 
+import fr.epita.assistants.ping.data.repository.CommandsRepository;
 import fr.epita.assistants.ping.data.repository.WarehouseStockRepository;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -16,6 +17,9 @@ public class CommandResource {
     @Inject
     WarehouseStockRepository warehouseStockRepository;
 
+    @Inject
+    CommandsRepository commandsRepository;
+
     @GET
     @Path("/stock-count/{userId}")
     public Response getStockCount(@PathParam("userId") String userIdStr) {
@@ -31,6 +35,24 @@ public class CommandResource {
             return Response.status(Response.Status.BAD_REQUEST)
                     .entity("Invalid UUID format for userId")
                     .build();
+        }
+    }
+
+    @GET
+    @Path("/sold-month/{userId}")
+    public Response getSoldMonth(@PathParam("userId") String userIdStr) {
+        try {
+            UUID userId = UUID.fromString(userIdStr);
+            Integer sold = commandsRepository.countSoldMonth(userId);
+            return Response.ok()
+                    .entity(new StockCountResponse(sold))
+                    .build();
+
+        } catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid UUID format for userId")
+                    .build();
+
         }
     }
 

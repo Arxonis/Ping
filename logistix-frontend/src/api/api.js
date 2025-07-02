@@ -31,20 +31,24 @@ export async function login(login, password) {
          Remplacez l’implémentation par de vrais appels axios.               */
 /* ------------------------------------------------------------------------- */
 
+const userId = "e7e3e8c9-93da-4908-88d2-4159eb0735ac"
 
-
-
-
-export async function getStockCount(userId) {
+export async function getStockCount() {
+  try {
     console.log(`Fetching stock count for user ${userId}`);
-    // const { data } = await axios.get(`/api/products/count/${userId}`);
-    return 2376;
+    const { data } = await axios.get(`http://localhost:8080/commands/stock-count/${userId}`);
+    return data;
+  } catch (error) {
+    console.error("Erreur lors de la récupération du stock :", error);
+    throw error;
+  }
 }
 
-export async function getMonthlySales(userId) {
-    console.log(`Fetching stock count for user ${userId}`);
-    // const { data } = await axios.get(`/api/sales/lastMonth/${userId}`);
-    return 677;
+
+
+export async function getMonthlySales() {
+    const { data } = await axios.get(`http://localhost:8080/commands/sold-month/${userId}`);
+    return data;
 }
 
 export async function getTransitCount(userId) {
