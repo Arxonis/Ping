@@ -56,6 +56,24 @@ public class CommandResource {
         }
     }
 
+    @GET
+    @Path("/transit_in/{userId}")
+    public Response getInProgress(@PathParam("userId") String userIdStr) {
+        try {
+            UUID userId = UUID.fromString(userIdStr);
+            Integer inProgress = commandsRepository.countInProgress(userId);
+            System.out.println(inProgress);
+            return Response.ok()
+                    .entity(new StockCountResponse(inProgress))
+                    .build();
+        }
+        catch (IllegalArgumentException e) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid UUID format for userId")
+                    .build();
+        }
+    }
+
     public static class StockCountResponse {
         public Integer totalQuantity;
 

@@ -30,6 +30,18 @@ public class CommandsRepository implements PanacheRepository<CommandsModel> {
         return count;
     }
 
+    public Integer countInProgress(UUID userId) {
+        Integer count = 0;
+        List<CommandsModel> commandsModels = find("user.id", userId).list();
+        for (CommandsModel commandsModel : commandsModels) {
+            if (commandsModel.getState() == CommandsModel.State.IN_PROGRESS) {
+                count += commandsModel.getNbProducts();
+            }
+        }
+        System.out.println(count);
+        return count;
+    }
+
     public CommandsModel findById(UUID id) {
         return find("id", id).firstResult();
     }

@@ -31,7 +31,7 @@ export async function login(login, password) {
          Remplacez l’implémentation par de vrais appels axios.               */
 /* ------------------------------------------------------------------------- */
 
-const userId = "e7e3e8c9-93da-4908-88d2-4159eb0735ac"
+const userId = "4c046b18-8e5d-4809-b9b1-5086602d764c"
 
 export async function getStockCount() {
   try {
@@ -51,10 +51,10 @@ export async function getMonthlySales() {
     return data;
 }
 
-export async function getTransitCount(userId) {
+export async function getTransitCount() {
     console.log(`Fetching stock count for user ${userId}`);
-    // const { data } = await axios.get(`/api/commands/transit_in/${userId}`);
-    return 200;
+    const { data } = await axios.get(`http://localhost:8080/commands/transit_in/${userId}`);
+    return data;
 }
 
 export async function getRevenueChart(userId) {

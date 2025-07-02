@@ -27,13 +27,16 @@ export default function ProductsPage() {
   console.log("stock", stock);
   console.log("stockssssss", stock.error);
   const sales = useQuery({
-    queryKey: ["salesCount", userId],
+    queryKey: ["salesCount"],
     queryFn: () => getMonthlySales(),
   });
   const transit = useQuery({
-    queryKey: ["transitCount", userId],
-    queryFn: () => getTransitCount(userId),
+    queryKey: ["transitCount"],
+    queryFn: () => getTransitCount(),
   });
+
+  console.log("sales", sales);
+  console.log("transit", transit);
 
   /* listes produits */
   const inStock = useQuery({
@@ -101,7 +104,7 @@ export default function ProductsPage() {
                   icon={<ShoppingCart size={32} color="#0d6efd" />}
                 />
                 <StatCard
-                  value={transit.data}
+                  value={transit.data.totalQuantity}
                   label="produits en transit"
                   icon={<Truck size={32} color="#0d6efd" />}
                 />
