@@ -6,6 +6,7 @@ import fr.epita.assistants.ping.data.repository.CompanyRepository;
 import fr.epita.assistants.ping.data.repository.UserRepository;
 import fr.epita.assistants.ping.errors.ErrorsCode;
 import fr.epita.assistants.ping.utils.Logger;
+import jakarta.annotation.security.PermitAll;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
@@ -63,6 +64,28 @@ public class UserResource {
     private UUID uid(SecurityContext sec) {
         if (sec == null || sec.getUserPrincipal() == null) return null;
         return UUID.fromString(sec.getUserPrincipal().getName());
+    }
+
+
+
+    @GET
+    @jakarta.ws.rs.Path("/me")
+    @PermitAll
+    public Response me(@Context SecurityContext sec) {
+        String userIdStr = sec.getUserPrincipal().getName();
+        UUID userId;
+        try {
+            userId = UUID.fromString(userIdStr);
+        } catch (IllegalArgumentException ex) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid user ID in token")
+                    .build();
+        }
+
+        UserModel u = userRepo.findByIdOptional(userId)
+                .orElseThrow(() -> new WebApplicationException("User not found", 404));
+
+        return Response.ok(UserResponse.fromModel(u)).build();
     }
 
     @POST
