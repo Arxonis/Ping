@@ -27,8 +27,11 @@ public class UserModel {
     @Column(nullable = false)
     private String password;
 
-    
+
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
     private CompanyModel company;
+
 
     @JsonProperty("isAdmin")
     @Column(name="is_admin", nullable=false)
