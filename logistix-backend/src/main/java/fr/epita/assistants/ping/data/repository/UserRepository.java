@@ -11,6 +11,6 @@ import java.util.UUID;
 public class UserRepository implements PanacheRepositoryBase<UserModel, UUID> {
 
     public Optional<UserModel> findByLogin(String login) {
-        return find("login", login).firstResultOptional();
+        return find("displayName", login).firstResultOptional();
     }
 }
