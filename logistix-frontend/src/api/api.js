@@ -94,14 +94,14 @@ export async function getRevenueChart() {
 }
 
 export async function getProductsInStock() {
-    // const { data } = await axios.get(`/api/products/stock/${userId}`);
-    return [
-        { id: 1, name: 'Produit 1', qty: 1000 },
-        { id: 2, name: 'Produit 2', qty: 786 },
-        { id: 3, name: 'Produit 3', qty: 355 },
-        { id: 4, name: 'Produit 4', qty: 100 },
-        { id: 5, name: 'Produit 5', qty: 64 },
-    ];
+    let userId = localStorage.getItem('userId');
+    const { data } = await axios.get(`/warehouse-stock/stock-products/${userId}`);
+    console.log("getProductsInStockkkkkkkkkkkk", data);
+    return data.stockedProducts.map(product => ({
+        id: product.id,
+        name: product.name,
+        qty: product.quantity
+    }));
 }
 
 export async function getProductsPending() {

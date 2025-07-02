@@ -40,9 +40,10 @@ export default function ProductsPage() {
 
   /* listes produits */
   const inStock = useQuery({
-    queryKey: ["productsInStock", userId],
-    queryFn: () => getProductsInStock(userId),
+    queryKey: ["productsInStock"],
+    queryFn: () => getProductsInStock(),
   });
+  console.log("inStock", inStock);
   const pending = useQuery({
     queryKey: ["productsPending", userId],
     queryFn: () => getProductsPending(userId),
@@ -115,7 +116,7 @@ export default function ProductsPage() {
             <ProductSection
               id="stock"
               title="Produits en stock"
-              rows={inStock.data}
+              rows={inStock.data || []}
               color="#ff6b5e"
               addLabel="Ajouter un produit"
             />

@@ -18,4 +18,8 @@ public class WarehouseStockRepository implements PanacheRepositoryBase<Warehouse
         }
         return count;
     }
+
+    public List<WarehouseStockModel> findAllByUserId(UUID userId) {
+        return find("user.id", userId).list();
+    }
 }
