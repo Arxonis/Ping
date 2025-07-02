@@ -7,12 +7,16 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
+  TableHead,
   TableRow,
   Typography,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 import { motion } from "framer-motion";
-import { ArrowRightCircle, Image, RefreshCw } from "lucide-react";
+import React from "react";
+// On renomme le composant Image pour éviter toute collision avec la balise <img>
+import { ArrowRightCircle, Image as ImageIcon, RefreshCw } from "lucide-react";
 
 const statusMap = {
   in_progress: {
@@ -26,7 +30,7 @@ const statusMap = {
     icon: <RefreshCw size={16} />,
   },
   delivered: {
-    label: "Reçus",
+    label: "Reçu",
     color: "#28a745",
     icon: <ArrowRightCircle size={16} color="#28a745" />,
   },
@@ -37,9 +41,9 @@ const statusMap = {
   },
 };
 
-export default function OrderSection({ rows, onNewOrder }) {
-  console.log("OrderSection", rows);
+export default function OrderSection({ rows = [], onNewOrder }) {
   const theme = useTheme();
+
   return (
     <motion.div
       initial={{ y: 40, opacity: 0 }}
@@ -55,7 +59,7 @@ export default function OrderSection({ rows, onNewOrder }) {
           boxShadow: "0 4px 12px rgba(0,0,0,.05)",
         }}
       >
-        {/* en-tête */}
+        {/* En-tête */}
         <Stack
           direction="row"
           alignItems="center"
@@ -63,8 +67,8 @@ export default function OrderSection({ rows, onNewOrder }) {
           sx={{
             bgcolor:
               theme.palette.mode === "light"
-                ? theme.palette.primary.light // reste votre bleu clair
-                : theme.palette.grey[800], // gris foncé en dark
+                ? theme.palette.primary.light
+                : theme.palette.grey[800],
             px: 3,
             py: 1.5,
           }}
@@ -85,38 +89,62 @@ export default function OrderSection({ rows, onNewOrder }) {
           </Button>
         </Stack>
 
-        {/* tableau */}
-        <Table size="small">
-          <TableBody>
-            {rows.map((r, idx) => {
-              const st = statusMap[r.status] || statusMap.pending;
-              return (
-                <TableRow key={r.id} hover>
-                  <TableCell sx={{ pl: 3, width: 32 }}>
-                    <Image size={20} color="#0d6efd" />
-                  </TableCell>
-                  <TableCell>{r.name}</TableCell>
-                  <TableCell
-                    sx={{
-                      textAlign: "right",
-                      fontWeight: 600,
-                      color: st.color,
-                      pr: 2,
-                    }}
-                  >
-                    {r.qty}
-                  </TableCell>
-                  <TableCell sx={{ fontSize: 12, color: "text.secondary" }}>
-                    {st.label}
-                  </TableCell>
-                  <TableCell sx={{ width: 40, pr: 2 }}>
-                    <IconButton size="small">{st.icon}</IconButton>
-                  </TableCell>
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
+        {/* Tableau */}
+        <TableContainer>
+          <Table size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ pl: 3, width: 32 }} />
+                <TableCell>Date</TableCell>
+                <TableCell>Départ</TableCell>
+                <TableCell>Destination</TableCell>
+                <TableCell>Commande</TableCell>
+                <TableCell align="right">Quantité</TableCell>
+                <TableCell>Statut</TableCell>
+                <TableCell sx={{ pr: 2 }} />
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((r) => {
+                // transforme "IN_PROGRESS" en "in_progress"
+                const key = String(r.state).toLowerCase();
+                const st = statusMap[key] || statusMap.pending;
+
+                return (
+                  <TableRow key={r.id} hover>
+                    <TableCell sx={{ pl: 3, width: 32 }}>
+                      <ImageIcon size={20} color="#0d6efd" />
+                    </TableCell>
+                    <TableCell>
+                      {new Date(r.date).toLocaleString(undefined, {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      })}
+                    </TableCell>
+                    <TableCell>{r.departurePlace}</TableCell>
+                    <TableCell>{r.destPlace}</TableCell>
+                    <TableCell>{r.nom}</TableCell>
+                    <TableCell
+                      align="right"
+                      sx={{
+                        fontWeight: 600,
+                        color: st.color,
+                      }}
+                    >
+                      {r.nbProducts}
+                    </TableCell>
+                    <TableCell sx={{ fontSize: 12, color: "text.secondary" }}>
+                      {st.label}
+                    </TableCell>
+                    <TableCell sx={{ pr: 2 }}>
+                      <IconButton size="small">{st.icon}</IconButton>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
+        </TableContainer>
       </Paper>
     </motion.div>
   );
