@@ -17,11 +17,30 @@ export async function login(login, password) {
             login,
             password
         });
-        // data should be { token: "…" }
-        return data.token;
+        // data doit ressembler à { token: "...", user: { id, displayName, ... } }
+        const { token, user } = data;
+
+        // On stocke automatiquement l'ID de l'utilisateur
+        localStorage.setItem('userId', user.id);
+
+        console.log(`Login successful for ${login}`);
+        console.log(`User ID: ${user.id}`);
+
+        return { token, user };
     } catch (err) {
         console.error('Login failed', err);
-        // On peut remonter l’erreur à l’appelant
+        throw err;
+    }
+}
+
+export async function getUserCommands() {
+    let userId = localStorage.getItem('userId');
+    try {
+        // si vous proxiez /api vers votre backend, utilisez `/api/commands/…`
+        const { data } = await axios.get(`/commands/user/${userId}`);
+        return data;
+    } catch (err) {
+        console.error('Error fetching user commands', err);
         throw err;
     }
 }
@@ -31,33 +50,35 @@ export async function login(login, password) {
          Remplacez l’implémentation par de vrais appels axios.               */
 /* ------------------------------------------------------------------------- */
 
-const userId = "4c046b18-8e5d-4809-b9b1-5086602d764c"
 
 export async function getStockCount() {
-  try {
-    console.log(`Fetching stock count for user ${userId}`);
-    const { data } = await axios.get(`http://localhost:8080/commands/stock-count/${userId}`);
-    return data;
-  } catch (error) {
-    console.error("Erreur lors de la récupération du stock :", error);
-    throw error;
-  }
+    try {
+        let userId = localStorage.getItem('userId');
+        const { data } = await axios.get(`http://localhost:8080/commands/stock-count/${userId}`);
+        return data;
+    } catch (error) {
+        console.error("Erreur lors de la récupération du stock :", error);
+        throw error;
+    }
 }
 
 
 
 export async function getMonthlySales() {
+    let userId = localStorage.getItem('userId');
     const { data } = await axios.get(`http://localhost:8080/commands/sold-month/${userId}`);
     return data;
 }
 
 export async function getTransitCount() {
+    let userId = localStorage.getItem('userId');
     console.log(`Fetching stock count for user ${userId}`);
     const { data } = await axios.get(`http://localhost:8080/commands/transit_in/${userId}`);
     return data;
 }
 
-export async function getRevenueChart(userId) {
+export async function getRevenueChart() {
+    let userId = localStorage.getItem('userId');
     console.log(`Fetching stock count for user ${userId}`);
     /* Exemple de structure :
        [{ month: 'Jan', revenue: 12000, receipts: 18 }, … ]
@@ -72,7 +93,7 @@ export async function getRevenueChart(userId) {
     ];
 }
 
-export async function getProductsInStock(userId) {
+export async function getProductsInStock() {
     // const { data } = await axios.get(`/api/products/stock/${userId}`);
     return [
         { id: 1, name: 'Produit 1', qty: 1000 },
@@ -83,7 +104,7 @@ export async function getProductsInStock(userId) {
     ];
 }
 
-export async function getProductsPending(userId) {
+export async function getProductsPending() {
     // const { data } = await axios.get(`/api/products/pending/${userId}`);
     return [
         { id: 101, name: 'Produit_commandé 1', qty: 200 },
@@ -91,7 +112,7 @@ export async function getProductsPending(userId) {
     ];
 }
 
-export async function getSalesStats(userId) {
+export async function getSalesStats() {
     // const { data } = await axios.get(`/api/stats/sales/${userId}`);
     return [
         { month: 'Novembre', revenue: 200, receipts: 0 },
@@ -106,7 +127,7 @@ export async function getSalesStats(userId) {
  * Renvoie les 3 produits les plus vendus.
  * Format : [{ rank: 1, name: 'Produit X', qty: 995 }, …]
  */
-export async function getTopSellingProducts(userId) {
+export async function getTopSellingProducts() {
     // const { data } = await axios.get(`/api/stats/top-sellers/${userId}`);
     return [
         { rank: 1, name: 'Produit 1', qty: 995 },
@@ -115,7 +136,7 @@ export async function getTopSellingProducts(userId) {
     ];
 }
 
-export async function getOrderHistory(userId) {
+export async function getOrderHistory() {
     // return (await axios.get(`/api/orders/history/${userId}`)).data;
     return [
         { id: 1, name: 'Produit 1', qty: 1000, status: 'in_progress' },
@@ -197,13 +218,15 @@ export async function fetchProducts() {
 }
 
 export async function createProduct(payload) {
-    console.log("createProduct", payload);
+    let userId = localStorage.getItem('userId');
+    console.log("createProduct", payload, userId);
     await new Promise((r) => setTimeout(r, 300));
     return { success: true, id: Date.now().toString() };
 }
 
 export async function restockProduct({ productId, number }) {
-    console.log("restockProduct", productId, number);
+    let userId = localStorage.getItem('userId');
+    console.log("restockProduct", productId, number, userId);
     await new Promise((r) => setTimeout(r, 300));
     return { success: true };
 }
@@ -219,7 +242,8 @@ export async function fetchZones() {
 }
 
 export async function placeOrder({ productId, zoneId, quantity, unitPrice }) {
-    console.log("placeOrder", { productId, zoneId, quantity, unitPrice });
+    let userId = localStorage.getItem('userId');
+    console.log("placeOrder", { productId, zoneId, quantity, unitPrice }, userId);
     await new Promise((r) => setTimeout(r, 300));
     return { success: true, orderId: Date.now().toString() };
 }

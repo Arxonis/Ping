@@ -3,7 +3,7 @@ import { Alert, Box, CircularProgress, Typography } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
 
-import { getOrderHistory } from "../../api/api";
+import { getUserCommands } from "../../api/api";
 import LeftBar from "../../components/layout/LeftBar";
 import TopBar from "../../components/layout/TopBar";
 import CreateOrderDialog from "../../components/orders/CreateOrderDialog";
@@ -22,7 +22,7 @@ export default function OrdersPage() {
   // Récupère l'historique des commandes
   const ordersQ = useQuery({
     queryKey: ["orders", userId],
-    queryFn: () => getOrderHistory(userId),
+    queryFn: () => getUserCommands(),
   });
 
   const isLoading = ordersQ.isLoading;

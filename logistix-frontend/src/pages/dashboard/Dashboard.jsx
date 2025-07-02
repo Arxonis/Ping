@@ -80,17 +80,17 @@ export default function Dashboard() {
             >
               <Stack direction={{ xs: "column", md: "row" }} spacing={4} mb={6}>
                 <StatCard
-                  value={stock.data}
+                  value={stock.data.totalQuantity}
                   label="produits en stock"
                   icon={<Package size={32} color="#0d6efd" />}
                 />
                 <StatCard
-                  value={sales.data}
+                  value={sales.data.totalQuantity}
                   label="articles vendus ce mois"
                   icon={<ShoppingCart size={32} color="#0d6efd" />}
                 />
                 <StatCard
-                  value={transit.data}
+                  value={transit.data.totalQuantity}
                   label="produits en transit"
                   icon={<Truck size={32} color="#0d6efd" />}
                 />

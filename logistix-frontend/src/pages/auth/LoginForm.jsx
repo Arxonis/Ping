@@ -20,7 +20,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { login } from "../../api/api";
 
@@ -57,9 +56,9 @@ export default function LoginForm({ title, role }) {
 
   const onSubmit = async ({ login: userLogin, password }) => {
     try {
-      const token = await login(userLogin, password);
-      localStorage.setItem("authToken", token);
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      const res = await login(userLogin, password);
+      localStorage.setItem("authToken", res.token);
+      localStorage.setItem("userId", res.user.id);
       navigate("/dashboard");
     } catch {
       alert("Identifiants invalides");

@@ -8,6 +8,7 @@ import React from "react";
 const MotionPaper = motion(Paper);
 
 export default function StatCard({ value, label, icon, onClick }) {
+  console.log("StatCard", value);
   const theme = useTheme();
   const isLight = theme.palette.mode === "light";
 
