@@ -12,7 +12,7 @@ import java.util.UUID;
 @Table(name = "commands")
 public class CommandsModel {
 
-    enum State {
+    public static enum State {
         PENDING,
         IN_PROGRESS,
         COMPLETED,

@@ -1,7 +1,10 @@
 package fr.epita.assistants.ping.data.repository;
 
 import fr.epita.assistants.ping.data.model.WarehouseStockModel;
-import org.springframework.data.jpa.repository.JpaRepository;
+import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
+import jakarta.enterprise.context.ApplicationScoped;
+
 import java.util.UUID;
 
-public interface WarehouseStockRepository extends JpaRepository<WarehouseStockModel, UUID> {}
+@ApplicationScoped
+public class WarehouseStockRepository implements PanacheRepositoryBase<WarehouseStockModel, UUID> {}

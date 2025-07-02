@@ -12,46 +12,38 @@ import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
+
 import java.util.UUID;
 
-@Path("/api/user")
-@Consumes(MediaType.APPLICATION_JSON)
+@Path("/api/auth")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class AuthResource {
 
-    public record LoginRequest(
-            @Valid @jakarta.validation.constraints.NotBlank String login,
-            @Valid @jakarta.validation.constraints.NotBlank String password) {}
-
+    public record LoginRequest(String login, String password) {}
     public record LoginResponse(String token) {}
 
     @Inject
-    UserRepository users;
+    UserRepository userRepo;
 
     @Inject
-    TokenService tokens;
+    TokenService tokenService;
 
     @POST
     @Path("/login")
     @PermitAll
     @Transactional
-    public Response login(@Valid LoginRequest lreq) {
-        Logger.info("/login attempt %s", lreq.login());
-        if (lreq == null
-                || lreq.login() == null || lreq.password() == null
-                || lreq.login().isBlank() || lreq.password().isBlank()) {
-            Logger.error("/login ko %s", lreq == null ? "null" : lreq.login());
-            ErrorsCode.BAD_REQUEST.throwException("login/password missing or blank");
+    public Response login(@Valid LoginRequest req) {
+        Logger.info("login attempt %s", req.login());
+        if (req.login().isBlank() || req.password().isBlank()) {
+            ErrorsCode.BAD_REQUEST.throwException("Missing credentials");
         }
-
-        UserModel user = users.findByLogin(lreq.login());
-        if (user == null || !user.getPassword().equals(lreq.password())) {
-            Logger.error("/login ko %s", lreq.login());
+        UserModel u = userRepo.findByLogin(req.login())
+                .orElseThrow(() -> new WebApplicationException("User not found", 404));
+        if (!u.getPassword().equals(req.password())) {
             ErrorsCode.INVALID_LOGIN.throwException();
         }
-
-        String jwt = tokens.generate(user);
-        Logger.info("/login ok %s", user.getId());
+        String jwt = tokenService.generate(u);
         return Response.ok(new LoginResponse(jwt)).build();
     }
 
@@ -59,26 +51,17 @@ public class AuthResource {
     @Path("/refresh")
     @Authenticated
     public Response refresh(@Context SecurityContext sec) {
-        String userId = sec.getUserPrincipal().getName();
-        Logger.info("/refresh attempt %s", userId);
-
-        UUID uuid;
+        String sid = sec.getUserPrincipal().getName();
+        UUID id;
         try {
-            uuid = UUID.fromString(userId);
-        } catch (IllegalArgumentException ex) {
-            Logger.error("/refresh ko %s", userId);
-            ErrorsCode.BAD_REQUEST.throwException("Invalid user ID in token");
+            id = UUID.fromString(sid);
+        } catch (IllegalArgumentException e) {
+            ErrorsCode.BAD_REQUEST.throwException("Invalid token user id");
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-
-        UserModel user = users.findById(uuid);
-        if (user == null) {
-            Logger.error("/refresh ko %s", userId);
-            ErrorsCode.NOT_FOUND.throwException("User not found");
-        }
-
-        String newJwt = tokens.generate(user);
-        Logger.info("/refresh ok %s", userId);
-        return Response.ok(new LoginResponse(newJwt)).build();
+        UserModel u = userRepo.findByIdOptional(id)
+                .orElseThrow(() -> new WebApplicationException("User not found", 404));
+        String jwt = tokenService.generate(u);
+        return Response.ok(new LoginResponse(jwt)).build();
     }
 }
